@@ -1,27 +1,101 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/palette.dart';
+import '../layout/responsive_layout.dart';
+
 class GallerySection extends StatelessWidget {
   const GallerySection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveLayout.isMobile(context);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      color: Colors.black,
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: List.generate(
-          6,
-          (index) => Container(
-            width: 120,
-            height: 80,
-            color: Colors.white12,
-            alignment: Alignment.center,
-            child: const Text(
-              'Photo',
-              style: TextStyle(color: Colors.white54),
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 40 : 80,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Gallery',
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      color: Palette.deepGreen,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'A few examples of homes and businesses we’ve decorated. '
+                'These will be replaced with your actual project photos.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Palette.textMutedOnLight,
+                    ),
+              ),
+              const SizedBox(height: 24),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrow = constraints.maxWidth < 800;
+                  final itemWidth = isNarrow
+                      ? constraints.maxWidth
+                      : (constraints.maxWidth - 24) / 2;
+
+                  return Wrap(
+                    spacing: 24,
+                    runSpacing: 24,
+                    children: List.generate(
+                      4,
+                      (index) => SizedBox(
+                        width: itemWidth,
+                        height: 220,
+                        child: _GalleryPlaceholderCard(index: index + 1),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GalleryPlaceholderCard extends StatelessWidget {
+  final int index;
+
+  const _GalleryPlaceholderCard({required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [
+              Palette.deepGreen,
+              Palette.accentRed,
+              Palette.accentGold,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            'Project photo $index\n(Christmas lights here)',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
             ),
           ),
         ),

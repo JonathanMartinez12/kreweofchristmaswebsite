@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'theme/app_theme.dart';
 import 'pages/home_page.dart';
 
 class KreweOfChristmasApp extends StatelessWidget {
@@ -9,6 +10,7 @@ class KreweOfChristmasApp extends StatelessWidget {
     return MaterialApp(
       title: 'Krewe of Christmas',
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
       home: const HomePage(),
     );
   }
