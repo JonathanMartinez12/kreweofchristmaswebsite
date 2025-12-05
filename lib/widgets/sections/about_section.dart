@@ -1,18 +1,56 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/palette.dart';
+import '../layout/responsive_layout.dart';
+
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = ResponsiveLayout.isMobile(context);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      color: Colors.black87,
-      child: const Text(
-        'About Krewe of Christmas\n\n'
-        'This is placeholder text for the about section.',
-        style: TextStyle(color: Colors.white70),
+      color: Palette.pageBackground,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 32,
+        vertical: isMobile ? 40 : 80,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'About Krewe of Christmas',
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      color: Palette.deepGreen,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Krewe of Christmas is a locally owned holiday lighting company '
+                'specializing in custom designs for homes and businesses. '
+                'From the first design call to takedown after the season, our team '
+                'handles every detail so you can simply enjoy the magic.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Palette.textMutedOnLight,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'We use commercial-grade lights and professional installation methods '
+                'to keep your display bright, safe, and reliable all season long.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Palette.textMutedOnLight,
+                    ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
