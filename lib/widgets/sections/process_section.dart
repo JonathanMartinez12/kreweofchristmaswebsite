@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
 import '../layout/responsive_layout.dart';
+import '../common/primary_button.dart';
 
 class ProcessSection extends StatelessWidget {
   const ProcessSection({super.key});
@@ -50,13 +51,30 @@ class ProcessSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'How It Works',
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'How It Works',
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            color: Palette.deepGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                  if (!isMobile)
+                    PrimaryButton(
+                      label: 'Get a Free Quote',
+                      onPressed: () {},
+                    ),
+                ],
               ),
+              if (isMobile) const SizedBox(height: 16),
+              if (isMobile)
+                PrimaryButton(
+                  label: 'Get a Free Quote',
+                  onPressed: () {},
+                ),
               const SizedBox(height: 16),
               Text(
                 'A simple, stress-free process from quote to takedown.',
@@ -108,7 +126,7 @@ class _StepRow extends StatelessWidget {
           height: 40,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Palette.deepGreen,
+            color: Palette.accentRed,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Text(

@@ -8,30 +8,31 @@ class AppTypography {
 
     return base.copyWith(
       displayLarge: base.displayLarge?.copyWith(
-        fontSize: 42,
+        fontSize: 46,
         fontWeight: FontWeight.w800,
-        letterSpacing: 0.4,
-        color: Palette.textOnDark,
+        letterSpacing: 0.2,
+        color: Palette.textOnLight,
       ),
       displayMedium: base.displayMedium?.copyWith(
-        fontSize: 32,
-        fontWeight: FontWeight.w700,
-        color: Palette.textOnDark,
+        fontSize: 34,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.1,
+        color: Palette.textOnLight,
       ),
       titleLarge: base.titleLarge?.copyWith(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: Palette.textOnDark,
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: Palette.textOnLight,
       ),
       bodyLarge: base.bodyLarge?.copyWith(
         fontSize: 16,
-        height: 1.5,
-        color: Palette.textOnDark,
+        height: 1.6,
+        color: Palette.textOnLight,
       ),
       bodyMedium: base.bodyMedium?.copyWith(
         fontSize: 14,
         height: 1.5,
-        color: Palette.textOnDark,
+        color: Palette.textOnLight,
       ),
     );
   }
