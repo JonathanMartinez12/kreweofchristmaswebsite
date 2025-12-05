@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+import 'pages/home_page.dart';
+
+class KreweOfChristmasApp extends StatelessWidget {
+  const KreweOfChristmasApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Krewe of Christmas',
+      debugShowCheckedModeBanner: false,
+      home: const HomePage(),
+    );
+  }
+}
