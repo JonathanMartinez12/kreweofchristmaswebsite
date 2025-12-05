@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
 import '../layout/responsive_layout.dart';
+import '../common/primary_button.dart';
 
 class FAQSection extends StatelessWidget {
   const FAQSection({super.key});
@@ -19,7 +20,7 @@ class FAQSection extends StatelessWidget {
       _Faq(
         question: 'Do you provide the lights, or can you use ours?',
         answer:
-            'We provide commercial-grade lights for the best reliability, but we can discuss using existing lights on a case-by-case basis.',
+            'We provide commercial-grade lights for the best reliability, but can discuss using existing lights on a case-by-case basis.',
       ),
       _Faq(
         question: 'What happens after the holidays?',
@@ -41,13 +42,30 @@ class FAQSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'FAQs',
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'FAQs',
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            color: Palette.deepGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                  if (!isMobile)
+                    PrimaryButton(
+                      label: 'Get a Free Quote',
+                      onPressed: () {},
+                    ),
+                ],
               ),
+              if (isMobile) const SizedBox(height: 16),
+              if (isMobile)
+                PrimaryButton(
+                  label: 'Get a Free Quote',
+                  onPressed: () {},
+                ),
               const SizedBox(height: 24),
               ...faqs.map(
                 (faq) => Padding(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
 import '../layout/responsive_layout.dart';
+import '../common/primary_button.dart';
 
 class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
@@ -41,13 +42,33 @@ class ServicesSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Services',
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Services',
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            color: Palette.deepGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                  if (!isMobile)
+                    PrimaryButton(
+                      label: 'Get a Free Quote',
+                      onPressed: () {
+                        // TODO scroll to quote section
+                      },
+                    ),
+                ],
               ),
+              if (isMobile) const SizedBox(height: 16),
+              if (isMobile)
+                PrimaryButton(
+                  label: 'Get a Free Quote',
+                  onPressed: () {},
+                ),
               const SizedBox(height: 16),
               Text(
                 'From simple rooflines to full property designs, we provide end-to-end holiday lighting services.',

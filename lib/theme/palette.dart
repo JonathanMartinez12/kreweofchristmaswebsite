@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class Palette {
   // Backgrounds
-  static const Color pageBackground = Color(0xFFFDF7F0); // warm “snowy” cream
+  static const Color pageBackground = Color.fromARGB(255, 250, 246, 241); // warm “snowy” cream
   static const Color surfaceLight = Colors.white;
 
   // Christmas colors
-  static const Color deepGreen = Color(0xFF0B3B2E);
-  static const Color accentRed = Color(0xFFB32024);
-  static const Color accentGold = Color(0xFFF4C75B);
+  static const Color deepGreen = Color.fromARGB(255, 14, 150, 102); // richer green
+  static const Color accentRed = Color.fromARGB(255, 231, 27, 34); // strong red
+  static const Color accentGold = Color(0xFFF5C55A);
 
   // Text
   static const Color textOnLight = Color(0xFF222222);

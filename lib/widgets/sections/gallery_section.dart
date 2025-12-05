@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
 import '../layout/responsive_layout.dart';
+import '../common/primary_button.dart';
 
 class GallerySection extends StatelessWidget {
   const GallerySection({super.key});
@@ -23,17 +24,33 @@ class GallerySection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Gallery',
-                style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Gallery',
+                      style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                            color: Palette.deepGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                  if (!isMobile)
+                    PrimaryButton(
+                      label: 'Get a Free Quote',
+                      onPressed: () {},
+                    ),
+                ],
               ),
+              if (isMobile) const SizedBox(height: 16),
+              if (isMobile)
+                PrimaryButton(
+                  label: 'Get a Free Quote',
+                  onPressed: () {},
+                ),
               const SizedBox(height: 16),
               Text(
-                'A few examples of homes and businesses we’ve decorated. '
-                'These will be replaced with your actual project photos.',
+                'A few examples of homes and businesses we’ve decorated. These will be replaced with your actual project photos.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Palette.textMutedOnLight,
                     ),
@@ -78,8 +95,8 @@ class _GalleryPlaceholderCard extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
             colors: [
               Palette.deepGreen,
               Palette.accentRed,
