@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
@@ -18,13 +19,12 @@ class HeroSection extends StatelessWidget {
       height: isMobile ? 520 : 620,
       child: Stack(
         children: [
-          // 1) House photo – main visual (USING TEST IMAGE)
+          // 1) House photo – main visual
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: const AssetImage(kHeroBackgroundImageAsset),
-                  // image: const AssetImage(kHeroBackgroundImageAsset),
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
                   // MUCH lighter darkening so you can see the house
@@ -51,6 +51,11 @@ class HeroSection extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+
+          // 2.5) FALLING SNOW! ❄️
+          const Positioned.fill(
+            child: _FallingSnow(),
           ),
 
           // 3) Main content
@@ -84,6 +89,127 @@ class HeroSection extends StatelessWidget {
   }
 }
 
+// ============ FALLING SNOW WIDGET ============
+class _FallingSnow extends StatefulWidget {
+  const _FallingSnow();
+
+  @override
+  State<_FallingSnow> createState() => _FallingSnowState();
+}
+
+class _FallingSnowState extends State<_FallingSnow>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  final List<_Snowflake> _snowflakes = [];
+  final Random _random = Random();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Create 50 snowflakes with random properties
+    for (int i = 0; i < 50; i++) {
+      _snowflakes.add(_Snowflake(
+        x: _random.nextDouble(),
+        y: _random.nextDouble(),
+        size: _random.nextDouble() * 4 + 2, // 2-6px
+        speed: _random.nextDouble() * 0.5 + 0.3, // 0.3-0.8
+        drift: _random.nextDouble() * 0.2 - 0.1, // -0.1 to 0.1
+        opacity: _random.nextDouble() * 0.6 + 0.4, // 0.4-1.0
+      ));
+    }
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _SnowPainter(
+            snowflakes: _snowflakes,
+            animationValue: _controller.value,
+          ),
+          size: Size.infinite,
+        );
+      },
+    );
+  }
+}
+
+class _Snowflake {
+  final double x; // 0-1 (percentage of width)
+  final double y; // 0-1 (starting y position)
+  final double size; // pixel size
+  final double speed; // fall speed
+  final double drift; // horizontal drift
+  final double opacity; // transparency
+
+  _Snowflake({
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.speed,
+    required this.drift,
+    required this.opacity,
+  });
+}
+
+class _SnowPainter extends CustomPainter {
+  final List<_Snowflake> snowflakes;
+  final double animationValue;
+
+  _SnowPainter({
+    required this.snowflakes,
+    required this.animationValue,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.white;
+
+    for (final flake in snowflakes) {
+      // Calculate position with animation
+      final currentY = ((flake.y + animationValue * flake.speed) % 1.0) * size.height;
+      final currentX = (flake.x + sin(animationValue * 2 * pi + flake.x * 10) * flake.drift) * size.width;
+
+      paint.color = Colors.white.withOpacity(flake.opacity);
+
+      // Draw snowflake as a circle
+      canvas.drawCircle(
+        Offset(currentX, currentY),
+        flake.size,
+        paint,
+      );
+
+      // Optional: Add a subtle glow effect for larger snowflakes
+      if (flake.size > 4) {
+        paint.color = Colors.white.withOpacity(flake.opacity * 0.3);
+        canvas.drawCircle(
+          Offset(currentX, currentY),
+          flake.size * 1.5,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SnowPainter oldDelegate) => true;
+}
+
+// ============ REST OF THE HERO SECTION ============
 class _HeroText extends StatelessWidget {
   final bool isMobile;
 
