@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -253,14 +254,20 @@ class _HeroText extends StatelessWidget {
             PrimaryButton(
               label: 'Get a Free Quote',
               onPressed: () {
-                // TODO: scroll to quote section
+                ScrollService.scrollToSection(
+                  ScrollService.quoteKey,
+                  context,
+                );
               },
             ),
             PrimaryButton(
               label: 'View Gallery',
               isOutlined: true,
               onPressed: () {
-                // TODO: scroll to gallery section
+                ScrollService.scrollToSection(
+                  ScrollService.galleryKey,
+                  context,
+                );
               },
             ),
           ],
