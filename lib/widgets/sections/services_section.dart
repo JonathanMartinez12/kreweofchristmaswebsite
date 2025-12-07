@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -63,7 +64,6 @@ class ServicesSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Centered header
               Text(
                 'Our Services',
                 textAlign: TextAlign.center,
@@ -87,7 +87,6 @@ class ServicesSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 56),
-              // Service cards
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isNarrow = constraints.maxWidth < 900;
@@ -112,7 +111,10 @@ class ServicesSection extends StatelessWidget {
               PrimaryButton(
                 label: 'Get Your Free Quote',
                 onPressed: () {
-                  // TODO scroll to quote section
+                  ScrollService.scrollToSection(
+                    ScrollService.quoteKey,
+                    context,
+                  );
                 },
               ),
             ],
@@ -178,7 +180,6 @@ class _ServiceCardState extends State<_ServiceCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Icon
               Container(
                 width: 64,
                 height: 64,
@@ -193,7 +194,6 @@ class _ServiceCardState extends State<_ServiceCard> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Title
               Text(
                 widget.service.title,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -203,7 +203,6 @@ class _ServiceCardState extends State<_ServiceCard> {
                     ),
               ),
               const SizedBox(height: 12),
-              // Description
               Text(
                 widget.service.description,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -213,7 +212,6 @@ class _ServiceCardState extends State<_ServiceCard> {
                     ),
               ),
               const SizedBox(height: 20),
-              // Features list
               ...widget.service.features.map(
                 (feature) => Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),

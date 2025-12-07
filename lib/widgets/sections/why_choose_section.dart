@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -46,7 +47,7 @@ class WhyChooseSection extends StatelessWidget {
         icon: Icons.sentiment_satisfied_alt,
         title: '100% Satisfaction',
         description:
-            'We don\'t rest until you love your display. Your satisfaction is our top priority.',
+            'We do not rest until you love your display. Your satisfaction is our top priority.',
       ),
     ];
 
@@ -70,7 +71,7 @@ class WhyChooseSection extends StatelessWidget {
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       color: Palette.deepGreen,
                       fontWeight: FontWeight.bold,
-                      fontSize: 42,
+                      fontSize: isMobile ? 32 : 42,
                     ),
               ),
               const SizedBox(height: 16),
@@ -81,7 +82,7 @@ class WhyChooseSection extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Palette.textMutedOnLight,
-                        fontSize: 18,
+                        fontSize: isMobile ? 16 : 18,
                         height: 1.6,
                       ),
                 ),
@@ -90,23 +91,25 @@ class WhyChooseSection extends StatelessWidget {
               // Benefits grid
               LayoutBuilder(
                 builder: (context, constraints) {
-                  final isNarrow = constraints.maxWidth < 900;
-                  final cardWidth = isNarrow
-                      ? constraints.maxWidth
-                      : (constraints.maxWidth - 48) / 3;
+                  final screenWidth = constraints.maxWidth;
                   
-                  return Wrap(
-                    spacing: 24,
-                    runSpacing: 24,
-                    alignment: WrapAlignment.center,
-                    children: benefits
-                        .map(
-                          (benefit) => SizedBox(
-                            width: cardWidth,
-                            child: _BenefitCard(benefit: benefit),
-                          ),
-                        )
-                        .toList(),
+                  final crossAxisCount = screenWidth < 600 ? 2 : (screenWidth < 900 ? 2 : 3);
+                  final spacing = screenWidth < 600 ? 16.0 : 24.0;
+                  final childAspectRatio = screenWidth < 600 ? 0.85 : 1.0;
+                  
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: spacing,
+                      mainAxisSpacing: spacing,
+                      childAspectRatio: childAspectRatio,
+                    ),
+                    itemCount: benefits.length,
+                    itemBuilder: (context, index) {
+                      return _BenefitCard(benefit: benefits[index]);
+                    },
                   );
                 },
               ),
@@ -115,7 +118,10 @@ class WhyChooseSection extends StatelessWidget {
               PrimaryButton(
                 label: 'Get Your Free Quote Today',
                 onPressed: () {
-                  // TODO: scroll to quote section
+                  ScrollService.scrollToSection(
+                    ScrollService.quoteKey,
+                    context,
+                  );
                 },
               ),
             ],
@@ -152,12 +158,13 @@ class _BenefitCardState extends State<_BenefitCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        height: 220,
         decoration: BoxDecoration(
           color: _isHovered ? Palette.deepGreen : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(16),
@@ -167,14 +174,15 @@ class _BenefitCardState extends State<_BenefitCard> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(28.0),
+          padding: EdgeInsets.all(isMobile ? 16.0 : 28.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Icon
               Container(
-                width: 56,
-                height: 56,
+                width: isMobile ? 48 : 56,
+                height: isMobile ? 48 : 56,
                 decoration: BoxDecoration(
                   color: _isHovered
                       ? Colors.white.withOpacity(0.2)
@@ -184,32 +192,32 @@ class _BenefitCardState extends State<_BenefitCard> {
                 child: Icon(
                   widget.benefit.icon,
                   color: _isHovered ? Colors.white : Palette.accentGold,
-                  size: 28,
+                  size: isMobile ? 24 : 28,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: isMobile ? 12 : 16),
               // Title
               Text(
                 widget.benefit.title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: _isHovered ? Colors.white : Palette.deepGreen,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: isMobile ? 16 : 18,
                     ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: isMobile ? 6 : 8),
               // Description
-              Expanded(
+              Flexible(
                 child: Text(
                   widget.benefit.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: _isHovered
                             ? Colors.white.withOpacity(0.9)
                             : Palette.textMutedOnLight,
-                        height: 1.5,
-                        fontSize: 14,
+                        height: 1.4,
+                        fontSize: isMobile ? 12 : 14,
                       ),
-                  maxLines: 3,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

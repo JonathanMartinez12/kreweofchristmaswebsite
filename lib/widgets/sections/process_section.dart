@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
+import '../common/primary_button.dart';
 
 class ProcessSection extends StatelessWidget {
   const ProcessSection({super.key});
@@ -61,7 +63,6 @@ class ProcessSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
               Text(
                 'Our Process',
                 textAlign: TextAlign.center,
@@ -85,12 +86,10 @@ class ProcessSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 56),
-              // Steps
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isNarrow = constraints.maxWidth < 900;
                   if (isNarrow) {
-                    // Vertical layout for mobile
                     return Column(
                       children: steps
                           .asMap()
@@ -105,7 +104,6 @@ class ProcessSection extends StatelessWidget {
                           .toList(),
                     );
                   } else {
-                    // Grid layout for desktop
                     return Wrap(
                       spacing: 24,
                       runSpacing: 32,
@@ -183,7 +181,6 @@ class _StepCardState extends State<_StepCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Step number badge
               Container(
                 width: 56,
                 height: 56,
@@ -216,7 +213,6 @@ class _StepCardState extends State<_StepCard> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Icon
               Container(
                 width: 48,
                 height: 48,
@@ -231,7 +227,6 @@ class _StepCardState extends State<_StepCard> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Title
               Text(
                 widget.data.title,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -241,7 +236,6 @@ class _StepCardState extends State<_StepCard> {
                     ),
               ),
               const SizedBox(height: 12),
-              // Description
               Text(
                 widget.data.description,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(

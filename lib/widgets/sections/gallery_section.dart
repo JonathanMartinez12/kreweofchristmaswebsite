@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -11,7 +12,6 @@ class GallerySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveLayout.isMobile(context);
 
-    // Replace these with your actual image paths
     final galleryItems = [
       _GalleryItem(
         imagePath: 'assets/images/hero_house.jpg',
@@ -58,7 +58,6 @@ class GallerySection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
               Text(
                 'Our Work',
                 textAlign: TextAlign.center,
@@ -72,7 +71,7 @@ class GallerySection extends StatelessWidget {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: Text(
-                  'See how we\'ve transformed homes and businesses across the city with our professional Christmas light installations.',
+                  'See how we have transformed homes and businesses across the city with our professional Christmas light installations.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Colors.white.withOpacity(0.9),
@@ -82,15 +81,16 @@ class GallerySection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 56),
-              // Gallery Grid
               _GalleryGrid(items: galleryItems),
               const SizedBox(height: 56),
-              // CTA
               PrimaryButton(
-                label: 'View Full Gallery',
+                label: 'Get Your Free Quote',
                 isOutlined: true,
                 onPressed: () {
-                  // TODO: navigate to full gallery page or open lightbox
+                  ScrollService.scrollToSection(
+                    ScrollService.quoteKey,
+                    context,
+                  );
                 },
               ),
             ],
@@ -167,7 +167,6 @@ class _GalleryCardState extends State<_GalleryCard> {
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: () {
-          // TODO: Open image in lightbox/fullscreen
           _showImageDialog(context);
         },
         child: AnimatedContainer(
@@ -190,12 +189,10 @@ class _GalleryCardState extends State<_GalleryCard> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Image
                 Image.asset(
                   widget.item.imagePath,
                   fit: BoxFit.cover,
                 ),
-                // Gradient overlay
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   decoration: BoxDecoration(
@@ -209,7 +206,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                     ),
                   ),
                 ),
-                // Content overlay
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -221,7 +217,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Category badge
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -241,7 +236,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        // Title
                         Text(
                           widget.item.title,
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -250,7 +244,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                                 fontSize: _isHovered ? 22 : 20,
                               ),
                         ),
-                        // Expand icon when hovered
                         if (_isHovered) ...[
                           const SizedBox(height: 8),
                           Row(
@@ -275,12 +268,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                     ),
                   ),
                 ),
-                // Hover zoom effect
-                AnimatedScale(
-                  duration: const Duration(milliseconds: 300),
-                  scale: _isHovered ? 1.05 : 1.0,
-                  child: Container(),
-                ),
               ],
             ),
           ),
@@ -297,7 +284,6 @@ class _GalleryCardState extends State<_GalleryCard> {
         insetPadding: const EdgeInsets.all(24),
         child: Stack(
           children: [
-            // Image
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
@@ -307,7 +293,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                 ),
               ),
             ),
-            // Close button
             Positioned(
               top: 16,
               right: 16,
@@ -327,7 +312,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                 ),
               ),
             ),
-            // Info overlay
             Positioned(
               bottom: 16,
               left: 16,
