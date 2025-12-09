@@ -14,43 +14,53 @@ class GallerySection extends StatelessWidget {
 
     final galleryItems = [
       _GalleryItem(
-        imagePath: 'assets/images/hero_house.jpg',
-        title: 'Elegant Roofline Display',
-        category: 'Residential',
+        imagePath: 'assets/images/gallery/IMG_0820.jpeg',
+        number: 1,
       ),
       _GalleryItem(
-        imagePath: 'assets/images/hero_house.jpg',
-        title: 'Full Property Lighting',
-        category: 'Residential',
+        imagePath: 'assets/images/gallery/IMG_0821.jpeg',
+        number: 2,
       ),
       _GalleryItem(
-        imagePath: 'assets/images/hero_house.jpg',
-        title: 'Commercial Storefront',
-        category: 'Commercial',
+        imagePath: 'assets/images/gallery/IMG_0822.jpeg',
+        number: 3,
       ),
       _GalleryItem(
-        imagePath: 'assets/images/hero_house.jpg',
-        title: 'Tree & Landscape Lights',
-        category: 'Residential',
+        imagePath: 'assets/images/gallery/IMG_0823.jpeg',
+        number: 4,
       ),
       _GalleryItem(
-        imagePath: 'assets/images/hero_house.jpg',
-        title: 'Custom Pattern Design',
-        category: 'Residential',
+        imagePath: 'assets/images/gallery/IMG_0824.jpeg',
+        number: 5,
       ),
       _GalleryItem(
-        imagePath: 'assets/images/hero_house.jpg',
-        title: 'Office Building Display',
-        category: 'Commercial',
+        imagePath: 'assets/images/gallery/IMG_0825.jpeg',
+        number: 6,
+      ),
+      _GalleryItem(
+        imagePath: 'assets/images/gallery/IMG_0826.jpeg',
+        number: 7,
+      ),
+      _GalleryItem(
+        imagePath: 'assets/images/gallery/IMG_0827.jpeg',
+        number: 8,
+      ),
+      _GalleryItem(
+        imagePath: 'assets/images/gallery/IMG_0828.jpeg',
+        number: 9,
+      ),
+      _GalleryItem(
+        imagePath: 'assets/images/gallery/IMG_0829.jpeg',
+        number: 10,
       ),
     ];
 
     return Container(
       width: double.infinity,
-      color: Palette.deepGreen,
+      color: Colors.white, // Clean white background
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 48,
-        vertical: isMobile ? 60 : 100,
+        vertical: isMobile ? 80 : 120,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -58,34 +68,39 @@ class GallerySection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Header
               Text(
                 'Our Work',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Colors.white,
+                      color: Palette.deepGreen,
                       fontWeight: FontWeight.bold,
-                      fontSize: 42,
+                      fontSize: 48,
                     ),
               ),
               const SizedBox(height: 16),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: Text(
-                  'See how we have transformed homes and businesses across the city with our professional Christmas light installations.',
+                  'See how we\'ve transformed homes across Baton Rouge with our professional Christmas light installations.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Palette.textMutedOnLight,
                         fontSize: 18,
                         height: 1.6,
                       ),
                 ),
               ),
-              const SizedBox(height: 56),
+              const SizedBox(height: 60),
+              
+              // Clean Grid
               _GalleryGrid(items: galleryItems),
-              const SizedBox(height: 56),
+              
+              const SizedBox(height: 60),
+              
+              // CTA Button
               PrimaryButton(
                 label: 'Get Your Free Quote',
-                isOutlined: true,
                 onPressed: () {
                   ScrollService.scrollToSection(
                     ScrollService.quoteKey,
@@ -103,13 +118,11 @@ class GallerySection extends StatelessWidget {
 
 class _GalleryItem {
   final String imagePath;
-  final String title;
-  final String category;
+  final int number;
 
   const _GalleryItem({
     required this.imagePath,
-    required this.title,
-    required this.category,
+    required this.number,
   });
 }
 
@@ -126,8 +139,8 @@ class _GalleryGrid extends StatelessWidget {
         final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 900;
         
         final crossAxisCount = isMobile ? 1 : (isTablet ? 2 : 3);
-        final spacing = isMobile ? 16.0 : 24.0;
-        final childAspectRatio = isMobile ? 1.2 : 1.3;
+        final spacing = isMobile ? 20.0 : 32.0;
+        final childAspectRatio = 1.0; // Square images
 
         return GridView.builder(
           shrinkWrap: true,
@@ -171,103 +184,71 @@ class _GalleryCardState extends State<_GalleryCard> {
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
+          curve: Curves.easeOut,
+          transform: _isHovered 
+              ? (Matrix4.identity()..translate(0.0, -8.0))
+              : Matrix4.identity(),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: _isHovered
-                    ? Palette.accentGold.withOpacity(0.4)
-                    : Colors.black.withOpacity(0.3),
-                blurRadius: _isHovered ? 24 : 16,
-                offset: const Offset(0, 8),
+                    ? Colors.black.withOpacity(0.15)
+                    : Colors.black.withOpacity(0.08),
+                blurRadius: _isHovered ? 24 : 12,
+                offset: Offset(0, _isHovered ? 12 : 6),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             child: Stack(
               fit: StackFit.expand,
               children: [
+                // Image
                 Image.asset(
                   widget.item.imagePath,
                   fit: BoxFit.cover,
                 ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(_isHovered ? 0.7 : 0.5),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                ),
+                
+                // Number badge in top-left
                 Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    padding: EdgeInsets.all(_isHovered ? 24 : 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Palette.accentRed.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            widget.item.category,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                  top: 16,
+                  left: 16,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          widget.item.title,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: _isHovered ? 22 : 20,
-                              ),
-                        ),
-                        if (_isHovered) ...[
-                          const SizedBox(height: 8),
-                          Row(
-                            children: const [
-                              Icon(
-                                Icons.zoom_in,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              SizedBox(width: 6),
-                              Text(
-                                'Click to view',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
                       ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${widget.item.number}',
+                        style: const TextStyle(
+                          color: Palette.deepGreen,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
+                
+                // Subtle hover overlay
+                if (_isHovered)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.1),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -279,70 +260,92 @@ class _GalleryCardState extends State<_GalleryCard> {
   void _showImageDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(24),
+        insetPadding: const EdgeInsets.all(32),
         child: Stack(
           children: [
+            // Large image
             Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  widget.item.imagePath,
-                  fit: BoxFit.contain,
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxWidth: 1200,
+                  maxHeight: 800,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 40,
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    widget.item.imagePath,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
+            
+            // Close button
             Positioned(
-              top: 16,
-              right: 16,
+              top: 20,
+              right: 20,
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
                 icon: Container(
-                  padding: const EdgeInsets.all(8),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 12,
+                      ),
+                    ],
                   ),
                   child: const Icon(
                     Icons.close,
-                    color: Colors.white,
+                    color: Palette.deepGreen,
                     size: 24,
                   ),
                 ),
               ),
             ),
+            
+            // Image number in bottom-left
             Positioned(
-              bottom: 16,
-              left: 16,
-              right: 16,
+              bottom: 20,
+              left: 20,
               child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.item.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.item.category,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 16,
-                      ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 12,
                     ),
                   ],
+                ),
+                child: Text(
+                  'Image ${widget.item.number}',
+                  style: const TextStyle(
+                    color: Palette.deepGreen,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

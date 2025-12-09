@@ -30,15 +30,15 @@ class _NavBarState extends State<NavBar> {
             vertical: isMobile ? 10 : 14,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.10),
+            color: Colors.white.withOpacity(0.05),
             border: Border(
               bottom: BorderSide(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withOpacity(0.05),
               ),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: Colors.black.withOpacity(0.03),
                 blurRadius: 18,
                 offset: const Offset(0, 10),
               ),

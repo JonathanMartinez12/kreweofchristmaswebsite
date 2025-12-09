@@ -28,7 +28,6 @@ class HeroSection extends StatelessWidget {
                   image: const AssetImage(kHeroBackgroundImageAsset),
                   fit: BoxFit.cover,
                   alignment: Alignment.center,
-                  // MUCH lighter darkening so you can see the house
                   colorFilter: ColorFilter.mode(
                     Colors.black.withOpacity(0.25),
                     BlendMode.darken,
@@ -44,8 +43,8 @@ class HeroSection extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF0E3C24).withOpacity(0.30), // deep green
-                    const Color(0xFFA52E2E).withOpacity(0.30), // warm red
+                    const Color(0xFF0E3C24).withOpacity(0.30),
+                    const Color(0xFFA52E2E).withOpacity(0.30),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -108,15 +107,14 @@ class _FallingSnowState extends State<_FallingSnow>
   void initState() {
     super.initState();
     
-    // Create 50 snowflakes with random properties
     for (int i = 0; i < 50; i++) {
       _snowflakes.add(_Snowflake(
         x: _random.nextDouble(),
         y: _random.nextDouble(),
-        size: _random.nextDouble() * 4 + 2, // 2-6px
-        speed: _random.nextDouble() * 0.5 + 0.3, // 0.3-0.8
-        drift: _random.nextDouble() * 0.2 - 0.1, // -0.1 to 0.1
-        opacity: _random.nextDouble() * 0.6 + 0.4, // 0.4-1.0
+        size: _random.nextDouble() * 4 + 2,
+        speed: _random.nextDouble() * 0.5 + 0.3,
+        drift: _random.nextDouble() * 0.2 - 0.1,
+        opacity: _random.nextDouble() * 0.6 + 0.4,
       ));
     }
 
@@ -150,12 +148,12 @@ class _FallingSnowState extends State<_FallingSnow>
 }
 
 class _Snowflake {
-  final double x; // 0-1 (percentage of width)
-  final double y; // 0-1 (starting y position)
-  final double size; // pixel size
-  final double speed; // fall speed
-  final double drift; // horizontal drift
-  final double opacity; // transparency
+  final double x;
+  final double y;
+  final double size;
+  final double speed;
+  final double drift;
+  final double opacity;
 
   _Snowflake({
     required this.x,
@@ -181,20 +179,17 @@ class _SnowPainter extends CustomPainter {
     final paint = Paint()..color = Colors.white;
 
     for (final flake in snowflakes) {
-      // Calculate position with animation
       final currentY = ((flake.y + animationValue * flake.speed) % 1.0) * size.height;
       final currentX = (flake.x + sin(animationValue * 2 * pi + flake.x * 10) * flake.drift) * size.width;
 
       paint.color = Colors.white.withOpacity(flake.opacity);
 
-      // Draw snowflake as a circle
       canvas.drawCircle(
         Offset(currentX, currentY),
         flake.size,
         paint,
       );
 
-      // Optional: Add a subtle glow effect for larger snowflakes
       if (flake.size > 4) {
         paint.color = Colors.white.withOpacity(flake.opacity * 0.3);
         canvas.drawCircle(
@@ -210,7 +205,7 @@ class _SnowPainter extends CustomPainter {
   bool shouldRepaint(_SnowPainter oldDelegate) => true;
 }
 
-// ============ REST OF THE HERO SECTION ============
+// ============ HERO TEXT ============
 class _HeroText extends StatelessWidget {
   final bool isMobile;
 
@@ -219,7 +214,7 @@ class _HeroText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
+    
     return Column(
       crossAxisAlignment:
           isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
@@ -230,26 +225,26 @@ class _HeroText extends StatelessWidget {
           textAlign: isMobile ? TextAlign.center : TextAlign.left,
           style: textTheme.displayLarge?.copyWith(
             color: Colors.white,
-            fontWeight: FontWeight.w800,
-            height: 1.05,
+            fontSize: isMobile ? 42 : null,
           ),
         ),
         const SizedBox(height: 20),
+        
         Text(
           'Experience professional holiday lighting design, installation, '
           'maintenance, and takedown so your home or business shines all season.',
           textAlign: isMobile ? TextAlign.center : TextAlign.left,
           style: textTheme.bodyLarge?.copyWith(
-            color: Colors.white70,
-            height: 1.5,
+            color: Colors.white.withOpacity(0.95),
+            fontSize: isMobile ? 16 : 22,
           ),
         ),
         const SizedBox(height: 28),
+        
         Wrap(
           spacing: 16,
           runSpacing: 12,
-          alignment:
-              isMobile ? WrapAlignment.center : WrapAlignment.start,
+          alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
           children: [
             PrimaryButton(
               label: 'Get a Free Quote',
@@ -273,13 +268,13 @@ class _HeroText extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 18),
+        
         Wrap(
           spacing: 16,
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
-          alignment:
-              isMobile ? WrapAlignment.center : WrapAlignment.start,
-          children: const [
+          alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
+          children: [
             _HeroBadge(
               icon: Icons.check_circle,
               label: 'Licensed & insured',
@@ -295,6 +290,7 @@ class _HeroText extends StatelessWidget {
   }
 }
 
+// ============ HERO BADGE ============
 class _HeroBadge extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -315,7 +311,8 @@ class _HeroBadge extends StatelessWidget {
           label,
           style: const TextStyle(
             color: Colors.white70,
-            fontSize: 13,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -323,6 +320,7 @@ class _HeroBadge extends StatelessWidget {
   }
 }
 
+// ============ ANIMATED LIGHT BAR ============
 class _AnimatedLightBar extends StatefulWidget {
   const _AnimatedLightBar();
 
