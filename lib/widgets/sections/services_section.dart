@@ -68,9 +68,9 @@ class ServicesSection extends StatelessWidget {
                 'Our Services',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
+                      color: Palette.accentRed,  // BRIGHT RED HEADER
                       fontWeight: FontWeight.bold,
-                      fontSize: 42,
+                      fontSize: 48,
                     ),
               ),
               const SizedBox(height: 16),
@@ -162,13 +162,13 @@ class _ServiceCardState extends State<_ServiceCard> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: _isHovered ? Palette.accentRed : Colors.grey.shade200,
+            color: _isHovered ? Palette.deepGreen : Colors.grey.shade200,
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
               color: _isHovered
-                  ? Palette.accentRed.withOpacity(0.15)
+                  ? Palette.deepGreen.withOpacity(0.15)
                   : Colors.black.withOpacity(0.06),
               blurRadius: _isHovered ? 20 : 10,
               offset: const Offset(0, 4),
@@ -184,12 +184,12 @@ class _ServiceCardState extends State<_ServiceCard> {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: Palette.accentRed.withOpacity(0.1),
+                  color: Palette.deepGreen.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   widget.service.icon,
-                  color: Palette.accentRed,
+                  color: Palette.deepGreen,
                   size: 32,
                 ),
               ),
@@ -197,7 +197,7 @@ class _ServiceCardState extends State<_ServiceCard> {
               Text(
                 widget.service.title,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Palette.deepGreen,
+                      color: Palette.textOnLight,
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                     ),
@@ -220,7 +220,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     children: [
                       Icon(
                         Icons.check_circle,
-                        color: Palette.accentGold,
+                        color: Palette.deepGreen,
                         size: 20,
                       ),
                       const SizedBox(width: 8),

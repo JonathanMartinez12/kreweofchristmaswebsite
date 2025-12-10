@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../theme/palette.dart';
 
 class PrimaryButton extends StatefulWidget {
@@ -18,66 +19,43 @@ class PrimaryButton extends StatefulWidget {
 }
 
 class _PrimaryButtonState extends State<PrimaryButton> {
-  bool _hovered = false;
+  bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    final isOutlined = widget.isOutlined;
+    if (widget.isOutlined) {
+      return _buildOutlinedButton();
+    }
+    return _buildSolidButton();
+  }
 
-    // Base color (uses whatever accentRed is in your current Palette)
-    const baseRed = Palette.accentRed;
-
-    final filledGradient = const LinearGradient(
-      colors: [
-        baseRed,
-        Color(0xFF9C2F32), // slightly darker red for depth
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
-
-    final textColor = isOutlined ? baseRed : Colors.white;
-
+  Widget _buildSolidButton() {
     return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        curve: Curves.easeOut,
-        decoration: _buildDecoration(isOutlined),
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(999),
-            onTap: widget.onPressed,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 12,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.label,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
-                      color: textColor,
-                    ),
-                  ),
-                  if (!isOutlined) ...[
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 18,
-                      color: textColor,
-                    ),
-                  ],
-                ],
-              ),
+        duration: const Duration(milliseconds: 200),
+        child: ElevatedButton(
+          onPressed: widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Palette.deepGreen,  // Bright mint green
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32,
+              vertical: 16,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),  // SUPER ROUNDED like the image
+            ),
+            elevation: _isHovered ? 8 : 4,
+            shadowColor: Palette.deepGreen.withOpacity(0.4),
+          ),
+          child: Text(
+            widget.label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
             ),
           ),
         ),
@@ -85,35 +63,38 @@ class _PrimaryButtonState extends State<PrimaryButton> {
     );
   }
 
-  BoxDecoration _buildDecoration(bool isOutlined) {
-    if (isOutlined) {
-      return BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: Palette.accentRed,
-          width: 1.4,
+  Widget _buildOutlinedButton() {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        child: OutlinedButton(
+          onPressed: widget.onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Palette.deepGreen,
+            side: BorderSide(
+              color: Palette.deepGreen,
+              width: 2,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 32,
+              vertical: 16,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),  // SUPER ROUNDED
+            ),
+          ),
+          child: Text(
+            widget.label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+            ),
+          ),
         ),
-      );
-    }
-
-    return BoxDecoration(
-      gradient: const LinearGradient(
-        colors: [
-          Palette.accentRed,
-          Color(0xFF9C2F32),
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
       ),
-      borderRadius: BorderRadius.circular(999),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(_hovered ? 0.18 : 0.12),
-          blurRadius: _hovered ? 24 : 18,
-          offset: const Offset(0, 8),
-        ),
-      ],
     );
   }
 }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../theme/palette.dart';
 import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
-import 'primary_button.dart';
+import 'red_button.dart';  // Import red button
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -49,7 +49,7 @@ class _NavBarState extends State<NavBar> {
               constraints: const BoxConstraints(maxWidth: 1100),
               child: Row(
                 children: [
-                  // Logo - clickable to scroll to top
+                  // Logo
                   InkWell(
                     onTap: () {
                       ScrollService.scrollToSection(
@@ -57,12 +57,40 @@ class _NavBarState extends State<NavBar> {
                         context,
                       );
                     },
-                    child: Text(
-                      'Krewe of Christmas',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Palette.deepGreen,
-                            fontWeight: FontWeight.w800,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
+                          padding: const EdgeInsets.all(6),
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/images/logo.jpeg',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Krewe of Christmas',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                      ],
                     ),
                   ),
                   const Spacer(),
@@ -107,9 +135,9 @@ class _NavBarState extends State<NavBar> {
                     const SizedBox(width: 16),
                   ],
                   
-                  // Quote button (desktop)
+                  // RED QUOTE BUTTON (changed from PrimaryButton to RedButton)
                   if (!isMobile)
-                    PrimaryButton(
+                    RedButton(
                       label: 'Get a Free Quote',
                       onPressed: () {
                         ScrollService.scrollToSection(
@@ -119,12 +147,12 @@ class _NavBarState extends State<NavBar> {
                       },
                     ),
                   
-                  // Mobile hamburger menu (for future)
+                  // Mobile hamburger menu
                   if (isMobile)
                     IconButton(
                       icon: Icon(
                         _mobileMenuOpen ? Icons.close : Icons.menu,
-                        color: Palette.deepGreen,
+                        color: Colors.white,
                       ),
                       onPressed: () {
                         setState(() {
@@ -142,6 +170,7 @@ class _NavBarState extends State<NavBar> {
   }
 }
 
+// Keep _NavLink the same...
 class _NavLink extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
@@ -171,7 +200,7 @@ class _NavLinkState extends State<_NavLink> {
               Text(
                 widget.label,
                 style: TextStyle(
-                  color: _hovered ? Palette.accentRed : Palette.textMutedOnLight,
+                  color: _hovered ? Palette.accentRed : Colors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),

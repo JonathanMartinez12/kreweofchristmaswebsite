@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
-import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
-import '../common/primary_button.dart';
 
 class TestimonialsSection extends StatelessWidget {
   const TestimonialsSection({super.key});
@@ -14,25 +12,25 @@ class TestimonialsSection extends StatelessWidget {
 
     final testimonials = [
       _Testimonial(
-        quote:
-            'They made our house the best-looking one on the street. The whole process was effortless from start to finish.',
-        name: 'Sarah L.',
-        detail: 'Residential Client',
+        name: 'Sarah Johnson',
+        location: 'Baton Rouge, LA',
         rating: 5,
+        text:
+            'Absolutely stunning! Our home has never looked better. The team was professional, punctual, and the installation was flawless.',
       ),
       _Testimonial(
-        quote:
-            'Our storefront has never looked better. Customers comment on the lights every single day. Best investment we made this holiday season!',
-        name: 'Mike D.',
-        detail: 'Local Business Owner',
+        name: 'Michael Chen',
+        location: 'Baton Rouge, LA',
         rating: 5,
+        text:
+            'We\'ve used them for 3 years now. They store everything and make it so easy. Highly recommend!',
       ),
       _Testimonial(
-        quote:
-            'Professional, reliable, and the lights look absolutely stunning. They handled everything and it was completely stress-free.',
-        name: 'Jennifer K.',
-        detail: 'Residential Client',
+        name: 'Emily Rodriguez',
+        location: 'Baton Rouge, LA',
         rating: 5,
+        text:
+            'Great communication, fair pricing, and beautiful results. Our neighbors are jealous!',
       ),
     ];
 
@@ -47,23 +45,21 @@ class TestimonialsSection extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
               Text(
                 'What Our Clients Say',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
+                      color: Palette.accentRed,  // BRIGHT RED HEADER
                       fontWeight: FontWeight.bold,
-                      fontSize: 42,
+                      fontSize: 48,
                     ),
               ),
               const SizedBox(height: 16),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: Text(
-                  'Don\'t just take our word for it - hear from our satisfied customers who transformed their homes and businesses.',
+                  'Don\'t just take our word for it—hear from our satisfied customers.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Palette.textMutedOnLight,
@@ -73,7 +69,6 @@ class TestimonialsSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 56),
-              // Testimonials Grid
               LayoutBuilder(
                 builder: (context, constraints) {
                   final isNarrow = constraints.maxWidth < 900;
@@ -94,17 +89,6 @@ class TestimonialsSection extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 56),
-              // CTA
-              PrimaryButton(
-                label: 'Get Your Free Quote',
-                onPressed: () {
-                  ScrollService.scrollToSection(
-                    ScrollService.quoteKey,
-                    context,
-                  );
-                },
-              ),
             ],
           ),
         ),
@@ -114,118 +98,106 @@ class TestimonialsSection extends StatelessWidget {
 }
 
 class _Testimonial {
-  final String quote;
   final String name;
-  final String detail;
+  final String location;
   final int rating;
+  final String text;
 
   const _Testimonial({
-    required this.quote,
     required this.name,
-    required this.detail,
+    required this.location,
     required this.rating,
+    required this.text,
   });
 }
 
-class _TestimonialCard extends StatefulWidget {
+class _TestimonialCard extends StatelessWidget {
   final _Testimonial testimonial;
 
   const _TestimonialCard({required this.testimonial});
 
   @override
-  State<_TestimonialCard> createState() => _TestimonialCardState();
-}
-
-class _TestimonialCardState extends State<_TestimonialCard> {
-  bool _isHovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 280,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: _isHovered ? Palette.accentGold : Colors.grey.shade200,
-            width: 2,
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: _isHovered
-                  ? Palette.accentGold.withOpacity(0.15)
-                  : Colors.black.withOpacity(0.06),
-              blurRadius: _isHovered ? 20 : 10,
-              offset: const Offset(0, 4),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: List.generate(
+              testimonial.rating,
+              (index) => const Icon(
+                Icons.star,
+                color: Palette.accentGold,
+                size: 20,
+              ),
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(28.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            testimonial.text,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Palette.textMutedOnLight,
+                  fontSize: 15,
+                  height: 1.6,
+                ),
+          ),
+          const SizedBox(height: 20),
+          Row(
             children: [
-              // Stars rating
-              Row(
-                children: List.generate(
-                  widget.testimonial.rating,
-                  (index) => const Icon(
-                    Icons.star,
-                    color: Palette.accentGold,
-                    size: 20,
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Palette.deepGreen,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Center(
+                  child: Text(
+                    testimonial.name[0],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              // Quote
-              Expanded(
-                child: Text(
-                  '"${widget.testimonial.quote}"',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Palette.textOnLight,
-                        height: 1.6,
-                        fontSize: 15,
-                        fontStyle: FontStyle.italic,
-                      ),
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Divider
-              Container(
-                height: 2,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Palette.accentRed,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Name
-              Text(
-                widget.testimonial.name,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    testimonial.name,
+                    style: const TextStyle(
+                      color: Palette.textOnLight,
                       fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-              ),
-              // Detail
-              Text(
-                widget.testimonial.detail,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  ),
+                  Text(
+                    testimonial.location,
+                    style: TextStyle(
                       color: Palette.textMutedOnLight,
                       fontSize: 13,
                     ),
+                  ),
+                ],
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

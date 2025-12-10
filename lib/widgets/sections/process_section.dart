@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
-import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
-import '../common/primary_button.dart';
 
 class ProcessSection extends StatelessWidget {
   const ProcessSection({super.key});
@@ -13,40 +11,35 @@ class ProcessSection extends StatelessWidget {
     final isMobile = ResponsiveLayout.isMobile(context);
 
     final steps = [
-      _StepData(
-        step: '01',
-        title: 'Consultation',
+      _Step(
+        number: '1',
+        title: 'Free Consultation',
         description:
-            'We begin with a detailed consultation to understand your design preferences, the scale of the project, and any unique requirements you have.',
-        icon: Icons.phone_in_talk,
+            'We discuss your vision, budget, and property details to create a custom lighting plan.',
       ),
-      _StepData(
-        step: '02',
-        title: 'Design & Planning',
+      _Step(
+        number: '2',
+        title: 'Design & Quote',
         description:
-            'Our experts craft a custom design plan that highlights the unique features of your home while maximizing visual impact.',
-        icon: Icons.design_services,
+            'Receive a detailed proposal with design mockups and transparent pricing.',
       ),
-      _StepData(
-        step: '03',
+      _Step(
+        number: '3',
         title: 'Professional Installation',
         description:
-            'Using top-quality lights and materials, our team installs your display efficiently and safely, taking care of all the intricate details.',
-        icon: Icons.construction,
+            'Our team installs your display using commercial-grade materials and safety practices.',
       ),
-      _StepData(
-        step: '04',
-        title: 'Maintenance',
+      _Step(
+        number: '4',
+        title: 'Enjoy the Season',
         description:
-            'Throughout the season, we offer routine maintenance to ensure your display remains flawless and shining bright.',
-        icon: Icons.build,
+            'Sit back and enjoy your stunning display. We handle maintenance if needed.',
       ),
-      _StepData(
-        step: '05',
-        title: 'Removal & Storage',
+      _Step(
+        number: '5',
+        title: 'Takedown & Storage',
         description:
-            'After the holidays, we handle the safe and timely removal of your lights, ensuring your property is left just as we found it.',
-        icon: Icons.inventory,
+            'After the holidays, we carefully remove and store your lights for next year.',
       ),
     ];
 
@@ -61,22 +54,21 @@ class ProcessSection extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'Our Process',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
+                      color: Palette.accentRed,
                       fontWeight: FontWeight.bold,
-                      fontSize: 42,
+                      fontSize: 48,
                     ),
               ),
               const SizedBox(height: 16),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: Text(
-                  'We follow a meticulous process to ensure that every installation is perfect from start to finish.',
+                  'From initial consultation to post-season takedown, we make the entire process effortless for you.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Palette.textMutedOnLight,
@@ -86,38 +78,13 @@ class ProcessSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 56),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isNarrow = constraints.maxWidth < 900;
-                  if (isNarrow) {
-                    return Column(
-                      children: steps
-                          .asMap()
-                          .entries
-                          .map((entry) => Padding(
-                                padding: const EdgeInsets.only(bottom: 32.0),
-                                child: _StepCard(
-                                  data: entry.value,
-                                  isLast: entry.key == steps.length - 1,
-                                ),
-                              ))
-                          .toList(),
-                    );
-                  } else {
-                    return Wrap(
-                      spacing: 24,
-                      runSpacing: 32,
-                      alignment: WrapAlignment.center,
-                      children: steps
-                          .map((step) => SizedBox(
-                                width: (constraints.maxWidth - 48) / 3,
-                                child: _StepCard(data: step, isLast: false),
-                              ))
-                          .toList(),
-                    );
-                  }
-                },
-              ),
+              
+              // TIMELINE VIEW (desktop)
+              if (!isMobile)
+                _TimelineDesktop(steps: steps)
+              else
+                // VERTICAL VIEW (mobile)
+                _TimelineMobile(steps: steps),
             ],
           ),
         ),
@@ -126,128 +93,223 @@ class ProcessSection extends StatelessWidget {
   }
 }
 
-class _StepData {
-  final String step;
+class _Step {
+  final String number;
   final String title;
   final String description;
-  final IconData icon;
 
-  const _StepData({
-    required this.step,
+  const _Step({
+    required this.number,
     required this.title,
     required this.description,
-    required this.icon,
   });
 }
 
-class _StepCard extends StatefulWidget {
-  final _StepData data;
-  final bool isLast;
+// ============ DESKTOP TIMELINE ============
+class _TimelineDesktop extends StatelessWidget {
+  final List<_Step> steps;
 
-  const _StepCard({
-    required this.data,
-    required this.isLast,
-  });
-
-  @override
-  State<_StepCard> createState() => _StepCardState();
-}
-
-class _StepCardState extends State<_StepCard> {
-  bool _isHovered = false;
+  const _TimelineDesktop({required this.steps});
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: _isHovered
-                  ? Palette.deepGreen.withOpacity(0.15)
-                  : Colors.black.withOpacity(0.06),
-              blurRadius: _isHovered ? 20 : 10,
-              offset: const Offset(0, 4),
+    return Column(
+      children: [
+        // Timeline connector line
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Horizontal line connecting all circles
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Palette.deepGreen,
+                    Palette.deepGreen,
+                    Palette.accentRed,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Number circles
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: steps.map((step) {
+                return Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: Palette.deepGreen,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 4,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Palette.deepGreen.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      step.number,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Palette.accentRed,
-                      Palette.accentRed.withOpacity(0.8),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Palette.accentRed.withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+        const SizedBox(height: 32),
+        // Step details
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: steps.map((step) {
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    Text(
+                      step.title,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Palette.textOnLight,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      step.description,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Palette.textMutedOnLight,
+                            fontSize: 14,
+                            height: 1.5,
+                          ),
                     ),
                   ],
                 ),
-                child: Text(
-                  widget.data.step,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+// ============ MOBILE TIMELINE ============
+class _TimelineMobile extends StatelessWidget {
+  final List<_Step> steps;
+
+  const _TimelineMobile({required this.steps});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: steps.asMap().entries.map((entry) {
+        final index = entry.key;
+        final step = entry.value;
+        final isLast = index == steps.length - 1;
+
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Timeline column with circle and line
+              Column(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Palette.deepGreen,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 4,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Palette.deepGreen.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        step.number,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (!isLast)
+                    Expanded(
+                      child: Container(
+                        width: 4,
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Palette.deepGreen.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 20),
+              // Content
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: isLast ? 0 : 32,
+                    top: 8,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        step.title,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Palette.textOnLight,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        step.description,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Palette.textMutedOnLight,
+                              fontSize: 15,
+                              height: 1.5,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: Palette.deepGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  widget.data.icon,
-                  color: Palette.deepGreen,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                widget.data.title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                    ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                widget.data.description,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Palette.textMutedOnLight,
-                      height: 1.6,
-                      fontSize: 15,
-                    ),
-              ),
             ],
           ),
-        ),
-      ),
+        );
+      }).toList(),
     );
   }
 }

@@ -21,7 +21,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const double _navHeight = 72.0;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -38,10 +37,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Scrollable content with section keys
+          // Scrollable content with NO top padding (hero goes to very top)
           SingleChildScrollView(
             controller: _scrollController,
-            padding: const EdgeInsets.only(top: _navHeight),
             child: Column(
               children: [
                 // Each section wrapped with its GlobalKey
@@ -86,15 +84,12 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Fixed navigation bar
-          Positioned(
+          // Fixed navigation bar OVERLAYS the hero (no gap!)
+          const Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: SizedBox(
-              height: _navHeight,
-              child: NavBar(),
-            ),
+            child: NavBar(),
           ),
         ],
       ),

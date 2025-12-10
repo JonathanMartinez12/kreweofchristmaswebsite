@@ -1,81 +1,90 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 import '../../theme/palette.dart';
 import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
-class GallerySection extends StatelessWidget {
+class GallerySection extends StatefulWidget {
   const GallerySection({super.key});
+
+  @override
+  State<GallerySection> createState() => _GallerySectionState();
+}
+
+class _GallerySectionState extends State<GallerySection> {
+  bool _showFullGallery = false;
+  int _currentPage = 0;
+  Timer? _autoPlayTimer;
+  final PageController _pageController = PageController();
+
+  final List<String> _allImages = [
+    'assets/images/gallery/IMG_0820.jpeg',
+    'assets/images/gallery/IMG_0821.jpeg',
+    'assets/images/gallery/IMG_0822.jpeg',
+    'assets/images/gallery/IMG_0823.jpeg',
+    'assets/images/gallery/IMG_0824.jpeg',
+    'assets/images/gallery/IMG_0825.jpeg',
+    'assets/images/gallery/IMG_0826.jpeg',
+    'assets/images/gallery/IMG_0827.jpeg',
+    'assets/images/gallery/IMG_0828.jpeg',
+    'assets/images/gallery/IMG_0829.jpeg',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoPlay();
+  }
+
+  @override
+  void dispose() {
+    _autoPlayTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoPlay() {
+    _autoPlayTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (!_showFullGallery && _pageController.hasClients) {
+        final nextPage = (_currentPage + 1) % _getPageCount();
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  int _getPageCount() {
+    return (_allImages.length / 3).ceil();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isMobile = ResponsiveLayout.isMobile(context);
 
-    final galleryItems = [
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0820.jpeg',
-        number: 1,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0821.jpeg',
-        number: 2,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0822.jpeg',
-        number: 3,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0823.jpeg',
-        number: 4,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0824.jpeg',
-        number: 5,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0825.jpeg',
-        number: 6,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0826.jpeg',
-        number: 7,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0827.jpeg',
-        number: 8,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0828.jpeg',
-        number: 9,
-      ),
-      _GalleryItem(
-        imagePath: 'assets/images/gallery/IMG_0829.jpeg',
-        number: 10,
-      ),
-    ];
-
     return Container(
       width: double.infinity,
-      color: Colors.white, // Clean white background
+      color: Colors.white,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 24 : 48,
-        vertical: isMobile ? 80 : 120,
+        vertical: isMobile ? 60 : 100,
       ),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1400),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
               Text(
                 'Our Work',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
+                      color: Palette.accentRed,  // BRIGHT RED HEADER
                       fontWeight: FontWeight.bold,
-                      fontSize: 48,
+                      fontSize: isMobile ? 36 : 48,
                     ),
               ),
               const SizedBox(height: 16),
@@ -86,19 +95,100 @@ class GallerySection extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Palette.textMutedOnLight,
-                        fontSize: 18,
+                        fontSize: isMobile ? 16 : 18,
                         height: 1.6,
                       ),
                 ),
               ),
-              const SizedBox(height: 60),
-              
-              // Clean Grid
-              _GalleryGrid(items: galleryItems),
-              
-              const SizedBox(height: 60),
-              
-              // CTA Button
+              const SizedBox(height: 48),
+
+              // Carousel
+              if (!_showFullGallery) ...[
+                SizedBox(
+                  height: isMobile ? 400 : 500,
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                    itemCount: _getPageCount(),
+                    itemBuilder: (context, pageIndex) {
+                      return _buildCarouselPage(pageIndex, isMobile);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Dots
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_getPageCount(), (index) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: _currentPage == index ? 32 : 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: _currentPage == index
+                            ? Palette.deepGreen
+                            : Palette.deepGreen.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+
+              // Full gallery
+              if (_showFullGallery) ...[
+                _buildFullGallery(isMobile),
+              ],
+
+              const SizedBox(height: 32),
+
+              // RED "View Full Gallery" button
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _showFullGallery = !_showFullGallery;
+                    if (_showFullGallery) {
+                      _autoPlayTimer?.cancel();
+                    } else {
+                      _startAutoPlay();
+                    }
+                  });
+                },
+                icon: Icon(
+                  _showFullGallery
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  _showFullGallery ? 'Show Less' : 'View Full Gallery',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Palette.accentRed,  // BRIGHT RED BUTTON
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Green CTA button
               PrimaryButton(
                 label: 'Get Your Free Quote',
                 onPressed: () {
@@ -114,141 +204,64 @@ class GallerySection extends StatelessWidget {
       ),
     );
   }
-}
 
-class _GalleryItem {
-  final String imagePath;
-  final int number;
+  Widget _buildCarouselPage(int pageIndex, bool isMobile) {
+    final startIndex = pageIndex * 3;
+    final endIndex = (startIndex + 3).clamp(0, _allImages.length);
+    final pageImages = _allImages.sublist(startIndex, endIndex);
 
-  const _GalleryItem({
-    required this.imagePath,
-    required this.number,
-  });
-}
-
-class _GalleryGrid extends StatelessWidget {
-  final List<_GalleryItem> items;
-
-  const _GalleryGrid({required this.items});
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 600;
-        final isTablet = constraints.maxWidth >= 600 && constraints.maxWidth < 900;
-        
-        final crossAxisCount = isMobile ? 1 : (isTablet ? 2 : 3);
-        final spacing = isMobile ? 20.0 : 32.0;
-        final childAspectRatio = 1.0; // Square images
-
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: spacing,
-            mainAxisSpacing: spacing,
-            childAspectRatio: childAspectRatio,
-          ),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return _GalleryCard(item: items[index]);
-          },
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        children: pageImages.map((imagePath) {
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: _buildImageCard(imagePath, isMobile),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
-}
 
-class _GalleryCard extends StatefulWidget {
-  final _GalleryItem item;
-
-  const _GalleryCard({required this.item});
-
-  @override
-  State<_GalleryCard> createState() => _GalleryCardState();
-}
-
-class _GalleryCardState extends State<_GalleryCard> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: () {
-          _showImageDialog(context);
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-          transform: _isHovered 
-              ? (Matrix4.identity()..translate(0.0, -8.0))
-              : Matrix4.identity(),
+  Widget _buildImageCard(String imagePath, bool isMobile) {
+    return GestureDetector(
+      onTap: () => _showImageDialog(imagePath),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: _isHovered
-                    ? Colors.black.withOpacity(0.15)
-                    : Colors.black.withOpacity(0.08),
-                blurRadius: _isHovered ? 24 : 12,
-                offset: Offset(0, _isHovered ? 12 : 6),
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Image
                 Image.asset(
-                  widget.item.imagePath,
+                  imagePath,
                   fit: BoxFit.cover,
                 ),
-                
-                // Number badge in top-left
-                Positioned(
-                  top: 16,
-                  left: 16,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.3),
                       ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${widget.item.number}',
-                        style: const TextStyle(
-                          color: Palette.deepGreen,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                     ),
                   ),
                 ),
-                
-                // Subtle hover overlay
-                if (_isHovered)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.1),
-                    ),
-                  ),
               ],
             ),
           ),
@@ -257,7 +270,85 @@ class _GalleryCardState extends State<_GalleryCard> {
     );
   }
 
-  void _showImageDialog(BuildContext context) {
+  Widget _buildFullGallery(bool isMobile) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: isMobile ? 2 : 3,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+      ),
+      itemCount: _allImages.length,
+      itemBuilder: (context, index) {
+        return _buildGridImage(_allImages[index], index + 1);
+      },
+    );
+  }
+
+  Widget _buildGridImage(String imagePath, int number) {
+    return GestureDetector(
+      onTap: () => _showImageDialog(imagePath),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$number',
+                        style: const TextStyle(
+                          color: Palette.deepGreen,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showImageDialog(String imagePath) {
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.9),
@@ -266,7 +357,6 @@ class _GalleryCardState extends State<_GalleryCard> {
         insetPadding: const EdgeInsets.all(32),
         child: Stack(
           children: [
-            // Large image
             Center(
               child: Container(
                 constraints: const BoxConstraints(
@@ -285,14 +375,12 @@ class _GalleryCardState extends State<_GalleryCard> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    widget.item.imagePath,
+                    imagePath,
                     fit: BoxFit.contain,
                   ),
                 ),
               ),
             ),
-            
-            // Close button
             Positioned(
               top: 20,
               right: 20,
@@ -315,36 +403,6 @@ class _GalleryCardState extends State<_GalleryCard> {
                     Icons.close,
                     color: Palette.deepGreen,
                     size: 24,
-                  ),
-                ),
-              ),
-            ),
-            
-            // Image number in bottom-left
-            Positioned(
-              bottom: 20,
-              left: 20,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-                child: Text(
-                  'Image ${widget.item.number}',
-                  style: const TextStyle(
-                    color: Palette.deepGreen,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

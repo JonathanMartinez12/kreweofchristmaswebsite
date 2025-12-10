@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
-import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
-import '../common/primary_button.dart';
 
 class FAQSection extends StatelessWidget {
   const FAQSection({super.key});
@@ -13,35 +11,35 @@ class FAQSection extends StatelessWidget {
     final isMobile = ResponsiveLayout.isMobile(context);
 
     final faqs = [
-      _Faq(
+      _FAQ(
         question: 'When do you start installing Christmas lights?',
         answer:
-            'We typically begin installs in early November and continue through early December, depending on availability. We recommend booking early to secure your preferred installation date, as our schedule fills up quickly during peak season.',
+            'We typically begin installations in early November and continue through mid-December. Book early to secure your preferred installation date!',
       ),
-      _Faq(
+      _FAQ(
         question: 'Do you provide the lights, or can you use ours?',
         answer:
-            'We provide commercial-grade LED lights for the best reliability, brightness, and energy efficiency. These lights are professionally maintained and tested before each season. While we can discuss using existing lights on a case-by-case basis, we recommend our premium lights for the best results.',
+            'We provide all lights, extension cords, and equipment as part of our service. We use commercial-grade LED lights that are brighter and more durable than consumer options.',
       ),
-      _Faq(
+      _FAQ(
         question: 'What happens after the holidays?',
         answer:
-            'We schedule takedown in early January, carefully remove all lights and decorations, and can label and store them in climate-controlled facilities for future seasons. This ensures your lights are protected and ready to go for next year without any hassle on your part.',
+            'We return in early January to carefully remove all lights. We label and store them in our climate-controlled facility, so they\'re ready to go for next season.',
       ),
-      _Faq(
+      _FAQ(
         question: 'Are you licensed and insured?',
         answer:
-            'Yes! We are fully licensed and insured for your peace of mind. Our team follows all safety protocols and industry standards to ensure a safe installation process for both our crew and your property.',
+            'Yes! We are fully licensed, insured, and bonded. Your property and our team are protected throughout the entire process.',
       ),
-      _Faq(
+      _FAQ(
         question: 'How much does installation cost?',
         answer:
-            'Pricing varies based on the size of your property, complexity of the design, and the type of lights used. We offer free quotes and will work with you to create a display that fits your budget. Contact us today for a personalized estimate!',
+            'Pricing varies based on the size of your property and complexity of design. Most residential installations range from \$800-\$3,000. Contact us for a free quote!',
       ),
-      _Faq(
+      _FAQ(
         question: 'Do you offer maintenance during the holiday season?',
         answer:
-            'Absolutely! We offer routine maintenance throughout the season to ensure your display stays flawless. If any lights go out or need adjustment, just give us a call and we\'ll take care of it promptly.',
+            'Absolutely! If any bulbs go out or connections loosen, just give us a call. We include maintenance visits in our service at no extra charge.',
       ),
     ];
 
@@ -56,16 +54,14 @@ class FAQSection extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 900),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Header
               Text(
                 'Frequently Asked Questions',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Palette.deepGreen,
+                      color: Palette.accentRed,
                       fontWeight: FontWeight.bold,
-                      fontSize: 42,
+                      fontSize: 48,
                     ),
               ),
               const SizedBox(height: 16),
@@ -79,35 +75,7 @@ class FAQSection extends StatelessWidget {
                     ),
               ),
               const SizedBox(height: 48),
-              // FAQ Items with accordions
-              ...faqs.asMap().entries.map(
-                    (entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: _FaqItem(
-                        faq: entry.value,
-                        index: entry.key,
-                      ),
-                    ),
-                  ),
-              const SizedBox(height: 48),
-              // CTA
-              Text(
-                'Still have questions?',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Palette.deepGreen,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 16),
-              PrimaryButton(
-                label: 'Get Your Free Quote',
-                onPressed: () {
-                  ScrollService.scrollToSection(
-                    ScrollService.quoteKey,
-                    context,
-                  );
-                },
-              ),
+              ...faqs.map((faq) => _FAQItem(faq: faq)),
             ],
           ),
         ),
@@ -116,141 +84,141 @@ class FAQSection extends StatelessWidget {
   }
 }
 
-class _Faq {
+class _FAQ {
   final String question;
   final String answer;
 
-  const _Faq({
+  const _FAQ({
     required this.question,
     required this.answer,
   });
 }
 
-class _FaqItem extends StatefulWidget {
-  final _Faq faq;
-  final int index;
+class _FAQItem extends StatefulWidget {
+  final _FAQ faq;
 
-  const _FaqItem({
-    required this.faq,
-    required this.index,
-  });
+  const _FAQItem({required this.faq});
 
   @override
-  State<_FaqItem> createState() => _FaqItemState();
+  State<_FAQItem> createState() => _FAQItemState();
 }
 
-class _FaqItemState extends State<_FaqItem> with SingleTickerProviderStateMixin {
+class _FAQItemState extends State<_FAQItem> with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
-  late final AnimationController _controller;
-  late final Animation<double> _expandAnimation;
+  late AnimationController _animationController;
+  late Animation<double> _rotationAnimation;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _expandAnimation = CurvedAnimation(
-      parent: _controller,
+    _rotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.5, // 180 degrees (0.5 * 360 = 180)
+    ).animate(CurvedAnimation(
+      parent: _animationController,
       curve: Curves.easeInOut,
-    );
+    ));
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
-  void _toggleExpansion() {
+  void _toggleExpanded() {
     setState(() {
       _isExpanded = !_isExpanded;
       if (_isExpanded) {
-        _controller.forward();
+        _animationController.forward();
       } else {
-        _controller.reverse();
+        _animationController.reverse();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: _isExpanded ? Palette.pageBackground : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _isExpanded ? Palette.accentRed : Colors.grey.shade200,
+          color: _isExpanded ? Palette.deepGreen : Colors.grey.shade200,
           width: 2,
         ),
         boxShadow: [
-          if (_isExpanded)
-            BoxShadow(
-              color: Palette.accentRed.withOpacity(0.1),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
+          BoxShadow(
+            color: _isExpanded
+                ? Palette.deepGreen.withOpacity(0.1)
+                : Colors.black.withOpacity(0.04),
+            blurRadius: _isExpanded ? 12 : 8,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: InkWell(
-        onTap: _toggleExpansion,
+        onTap: _toggleExpanded,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Question with icon
               Row(
                 children: [
                   Expanded(
                     child: Text(
                       widget.faq.question,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Palette.deepGreen,
-                            fontWeight: FontWeight.bold,
+                            color: Palette.deepGreen,  // GREEN QUESTIONS
+                            fontWeight: FontWeight.w600,
                             fontSize: 18,
                           ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  AnimatedRotation(
-                    turns: _isExpanded ? 0.5 : 0,
-                    duration: const Duration(milliseconds: 300),
+                  // Animated rotating arrow
+                  RotationTransition(
+                    turns: _rotationAnimation,
                     child: Container(
-                      width: 32,
-                      height: 32,
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
-                        color: _isExpanded
-                            ? Palette.accentRed
-                            : Colors.grey.shade200,
+                        color: Palette.deepGreen.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(
-                        Icons.add,
-                        color: _isExpanded ? Colors.white : Palette.deepGreen,
-                        size: 20,
+                      child: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Palette.deepGreen,
+                        size: 24,
                       ),
                     ),
                   ),
                 ],
               ),
-              // Answer (animated)
-              SizeTransition(
-                sizeFactor: _expandAnimation,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
+              // Animated expansion for answer
+              AnimatedCrossFade(
+                firstChild: const SizedBox.shrink(),
+                secondChild: Padding(
+                  padding: const EdgeInsets.only(top: 16),
                   child: Text(
                     widget.faq.answer,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Palette.textMutedOnLight,
+                          fontSize: 16,
                           height: 1.6,
-                          fontSize: 15,
                         ),
                   ),
                 ),
+                crossFadeState: _isExpanded
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: const Duration(milliseconds: 300),
               ),
             ],
           ),

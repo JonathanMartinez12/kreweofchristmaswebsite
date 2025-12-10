@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../theme/palette.dart';
 import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
-import '../common/primary_button.dart';
+import '../common/red_button.dart';
 
 const String kHeroBackgroundImageAsset = 'assets/images/hero_house.jpg';
 
@@ -17,10 +17,10 @@ class HeroSection extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: isMobile ? 520 : 620,
+      height: isMobile ? 600 : 700,
       child: Stack(
         children: [
-          // 1) House photo – main visual
+          // House photo
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -37,7 +37,7 @@ class HeroSection extends StatelessWidget {
             ),
           ),
 
-          // 2) VERY subtle red/green gradient overlay
+          // Gradient overlay
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -53,17 +53,19 @@ class HeroSection extends StatelessWidget {
             ),
           ),
 
-          // 2.5) FALLING SNOW! ❄️
+          // Falling snow
           const Positioned.fill(
             child: _FallingSnow(),
           ),
 
-          // 3) Main content
+          // Main content
           Positioned.fill(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 32,
-                vertical: isMobile ? 80 : 120,
+              padding: EdgeInsets.only(
+                left: isMobile ? 16 : 32,
+                right: isMobile ? 16 : 32,
+                top: isMobile ? 120 : 160,
+                bottom: isMobile ? 60 : 80,
               ),
               child: Center(
                 child: ConstrainedBox(
@@ -74,8 +76,6 @@ class HeroSection extends StatelessWidget {
                         : CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const _AnimatedLightBar(),
-                      const SizedBox(height: 32),
                       _HeroText(isMobile: isMobile),
                     ],
                   ),
@@ -89,7 +89,7 @@ class HeroSection extends StatelessWidget {
   }
 }
 
-// ============ FALLING SNOW WIDGET ============
+// ============ FALLING SNOW ============
 class _FallingSnow extends StatefulWidget {
   const _FallingSnow();
 
@@ -220,15 +220,19 @@ class _HeroText extends StatelessWidget {
           isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
+        // BIGGER HEADLINE - ALL WHITE
         Text(
           'Christmas Light\nInstallation in Your City',
           textAlign: isMobile ? TextAlign.center : TextAlign.left,
           style: textTheme.displayLarge?.copyWith(
             color: Colors.white,
-            fontSize: isMobile ? 42 : null,
+            fontSize: isMobile ? 48 : 72,
+            fontWeight: FontWeight.w800,
+            height: 1.1,
+            letterSpacing: -1.5,
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         
         Text(
           'Experience professional holiday lighting design, installation, '
@@ -236,18 +240,20 @@ class _HeroText extends StatelessWidget {
           textAlign: isMobile ? TextAlign.center : TextAlign.left,
           style: textTheme.bodyLarge?.copyWith(
             color: Colors.white.withOpacity(0.95),
-            fontSize: isMobile ? 16 : 22,
+            fontSize: isMobile ? 18 : 24,
           ),
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 32),
         
         Wrap(
           spacing: 16,
           runSpacing: 12,
           alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
           children: [
-            PrimaryButton(
+            // RED BUTTON using RedButton component
+            RedButton(
               label: 'Get a Free Quote',
+              isLarge: true,
               onPressed: () {
                 ScrollService.scrollToSection(
                   ScrollService.quoteKey,
@@ -255,9 +261,9 @@ class _HeroText extends StatelessWidget {
                 );
               },
             ),
-            PrimaryButton(
+            // WHITE OUTLINED BUTTON
+            _HeroOutlinedButton(
               label: 'View Gallery',
-              isOutlined: true,
               onPressed: () {
                 ScrollService.scrollToSection(
                   ScrollService.galleryKey,
@@ -290,6 +296,42 @@ class _HeroText extends StatelessWidget {
   }
 }
 
+// ============ OUTLINED BUTTON ============
+class _HeroOutlinedButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+
+  const _HeroOutlinedButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.white,
+        side: const BorderSide(color: Colors.white, width: 2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 40,
+          vertical: 20,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
 // ============ HERO BADGE ============
 class _HeroBadge extends StatelessWidget {
   final IconData icon;
@@ -316,67 +358,6 @@ class _HeroBadge extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-// ============ ANIMATED LIGHT BAR ============
-class _AnimatedLightBar extends StatefulWidget {
-  const _AnimatedLightBar();
-
-  @override
-  State<_AnimatedLightBar> createState() => _AnimatedLightBarState();
-}
-
-class _AnimatedLightBarState extends State<_AnimatedLightBar>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 8,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(999),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final t = _controller.value;
-            final beginAlignment = Alignment(-1.5 + 3 * t, 0);
-            final endAlignment = Alignment(1.5 + 3 * t, 0);
-
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: const [
-                    Palette.deepGreen,
-                    Palette.accentRed,
-                    Palette.accentGold,
-                    Palette.deepGreen,
-                  ],
-                  begin: beginAlignment,
-                  end: endAlignment,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
     );
   }
 }
