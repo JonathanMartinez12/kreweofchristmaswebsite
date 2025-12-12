@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../services/email_service.dart';
 import '../layout/responsive_layout.dart';
 
 class QuoteSection extends StatelessWidget {
@@ -67,6 +68,8 @@ class _QuoteFormState extends State<_QuoteForm> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _messageController = TextEditingController();
+  
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -76,6 +79,78 @@ class _QuoteFormState extends State<_QuoteForm> {
     _addressController.dispose();
     _messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      final success = await EmailService.sendQuoteRequest(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        address: _addressController.text.trim(),
+        message: _messageController.text.trim().isEmpty 
+            ? 'No additional message provided' 
+            : _messageController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        // Success!
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Thank you for submitting your free quote request! We\'ll be in touch soon.'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 4),
+          ),
+        );
+        
+        // Clear form
+        _formKey.currentState!.reset();
+        _nameController.clear();
+        _emailController.clear();
+        _phoneController.clear();
+        _addressController.clear();
+        _messageController.clear();
+      } else {
+        // Error from EmailJS
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to send message. Please try again or call us directly.'),
+            backgroundColor: Palette.accentRed,
+            duration: Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (error) {
+      // Show error to user
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${error.toString()}'),
+          backgroundColor: Palette.accentRed,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+      
+      // Print error to console for debugging
+      print('Error submitting form: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 
   @override
@@ -89,7 +164,7 @@ class _QuoteFormState extends State<_QuoteForm> {
             label: 'Full Name',
             hint: 'John Smith',
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your name';
               }
               return null;
@@ -102,10 +177,10 @@ class _QuoteFormState extends State<_QuoteForm> {
             hint: 'john@example.com',
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your email';
               }
-              if (!value.contains('@')) {
+              if (!value.contains('@') || !value.contains('.')) {
                 return 'Please enter a valid email';
               }
               return null;
@@ -118,7 +193,7 @@ class _QuoteFormState extends State<_QuoteForm> {
             hint: '(555) 123-4567',
             keyboardType: TextInputType.phone,
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your phone number';
               }
               return null;
@@ -130,7 +205,7 @@ class _QuoteFormState extends State<_QuoteForm> {
             label: 'Property Address',
             hint: '123 Main St, Baton Rouge, LA',
             validator: (value) {
-              if (value == null || value.isEmpty) {
+              if (value == null || value.trim().isEmpty) {
                 return 'Please enter your address';
               }
               return null;
@@ -145,37 +220,37 @@ class _QuoteFormState extends State<_QuoteForm> {
           ),
           const SizedBox(height: 32),
           
-          // Submit button - styled to match the form
+          // Submit button with loading state
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // TODO: Submit form
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Thank you! We\'ll be in touch soon.'),
-                      backgroundColor: Palette.deepGreen,
-                    ),
-                  );
-                }
-              },
+              onPressed: _isSubmitting ? null : _submitForm,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Palette.deepGreen,
+                disabledBackgroundColor: Colors.white.withOpacity(0.5),
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Submit Request',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              child: _isSubmitting
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Palette.deepGreen),
+                      ),
+                    )
+                  : const Text(
+                      'Submit Request',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -195,6 +270,7 @@ class _QuoteFormState extends State<_QuoteForm> {
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      enabled: !_isSubmitting,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
@@ -218,6 +294,18 @@ class _QuoteFormState extends State<_QuoteForm> {
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Palette.accentRed, width: 2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Palette.accentRed, width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
+        ),
+        errorStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
         ),
       ),
       validator: validator,
