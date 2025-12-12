@@ -11,7 +11,7 @@ class KreweOfChristmasApp extends StatelessWidget {
       title: 'Krewe of Christmas',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const HomePage(),
+      home: HomePage(),  // ← Removed const here
     );
   }
 }

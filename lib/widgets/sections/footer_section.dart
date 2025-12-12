@@ -12,10 +12,10 @@ class FooterSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: Palette.deepGreen,
+      color: const Color.fromARGB(255, 242, 239, 229),  // Cream/off-white color
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 16 : 32,
-        vertical: 24,
+        vertical: 32,
       ),
       child: Center(
         child: ConstrainedBox(
@@ -27,38 +27,64 @@ class FooterSection extends StatelessWidget {
               Text(
                 'Krewe of Christmas',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Palette.textOnDark,
+                      color: Palette.textOnLight,  // Dark text
                       fontWeight: FontWeight.w700,
+                      fontSize: 24,
                     ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Professional Christmas light installation – design, install, maintenance, and takedown.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Palette.textMutedOnDark,
+                textAlign: isMobile ? TextAlign.center : TextAlign.left,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Palette.textMutedOnLight,  // Gray text
+                      fontSize: 16,
                     ),
               ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: isMobile
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '© ${DateTime.now().year} Krewe of Christmas. All rights reserved.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Palette.textMutedOnDark,
-                        ),
-                  ),
-                  if (!isMobile)
+              const SizedBox(height: 24),
+              
+              // Copyright and Licensed section
+              if (isMobile)
+                Column(
+                  children: [
+                    Text(
+                      '© ${DateTime.now().year} Krewe of Christmas. All rights reserved.',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Palette.textMutedOnLight,
+                            fontSize: 14,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
                     Text(
                       'Licensed & insured',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Palette.textMutedOnDark,
+                            color: Palette.textMutedOnLight,
+                            fontSize: 14,
                           ),
                     ),
-                ],
-              ),
+                  ],
+                )
+              else
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '© ${DateTime.now().year} Krewe of Christmas. All rights reserved.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Palette.textMutedOnLight,
+                            fontSize: 14,
+                          ),
+                    ),
+                    Text(
+                      'Licensed & insured',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Palette.textMutedOnLight,
+                            fontSize: 14,
+                          ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

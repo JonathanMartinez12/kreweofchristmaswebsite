@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -24,7 +25,6 @@ class AboutSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header row with CTA
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -32,8 +32,9 @@ class AboutSection extends StatelessWidget {
                     child: Text(
                       'About Krewe of Christmas',
                       style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                            color: Palette.deepGreen,
+                            color: Palette.accentRed,  // BRIGHT RED HEADER
                             fontWeight: FontWeight.bold,
+                            fontSize: 48,
                           ),
                     ),
                   ),
@@ -41,7 +42,10 @@ class AboutSection extends StatelessWidget {
                     PrimaryButton(
                       label: 'Get a Free Quote',
                       onPressed: () {
-                        // TODO: scroll to quote section
+                        ScrollService.scrollToSection(
+                          ScrollService.quoteKey,
+                          context,
+                        );
                       },
                     ),
                 ],
@@ -51,7 +55,10 @@ class AboutSection extends StatelessWidget {
                 PrimaryButton(
                   label: 'Get a Free Quote',
                   onPressed: () {
-                    // TODO: scroll to quote section
+                    ScrollService.scrollToSection(
+                      ScrollService.quoteKey,
+                      context,
+                    );
                   },
                 ),
               const SizedBox(height: 24),
@@ -62,6 +69,8 @@ class AboutSection extends StatelessWidget {
                 'detail so you can simply enjoy the magic.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Palette.textMutedOnLight,
+                      fontSize: 18,
+                      height: 1.6,
                     ),
               ),
               const SizedBox(height: 12),
@@ -70,6 +79,8 @@ class AboutSection extends StatelessWidget {
                 'to keep your display bright, safe, and reliable all season long.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Palette.textMutedOnLight,
+                      fontSize: 18,
+                      height: 1.6,
                     ),
               ),
             ],
