@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 
 import '../../theme/palette.dart';
-import '../../utils/scroll_service.dart';
+import '../../utils/links.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -202,12 +202,7 @@ class _GallerySectionState extends State<GallerySection> {
               // Green CTA button
               PrimaryButton(
                 label: 'Get Your Free Quote',
-                onPressed: () {
-                  ScrollService.scrollToSection(
-                    ScrollService.quoteKey,
-                    context,
-                  );
-                },
+                onPressed: Links.openQuoteForm,
               ),
             ],
           ),

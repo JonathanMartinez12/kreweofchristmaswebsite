@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../../theme/palette.dart';
+import '../../utils/links.dart';
 import '../layout/responsive_layout.dart';
 
 class FooterSection extends StatelessWidget {
@@ -41,8 +44,25 @@ class FooterSection extends StatelessWidget {
                       fontSize: 16,
                     ),
               ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  _SocialIcon(
+                    icon: FontAwesomeIcons.instagram,
+                    tooltip: 'Instagram',
+                    url: Links.instagram,
+                  ),
+                  SizedBox(width: 12),
+                  _SocialIcon(
+                    icon: FontAwesomeIcons.google,
+                    tooltip: 'Google Reviews',
+                    url: Links.googleReviews,
+                  ),
+                ],
+              ),
               const SizedBox(height: 24),
-              
+
               // Copyright and Licensed section
               if (isMobile)
                 Column(
@@ -86,6 +106,40 @@ class FooterSection extends StatelessWidget {
                   ],
                 ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialIcon extends StatelessWidget {
+  final FaIconData icon;
+  final String tooltip;
+  final String url;
+
+  const _SocialIcon({
+    required this.icon,
+    required this.tooltip,
+    required this.url,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Palette.deepGreen,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: () => Links.open(url),
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Center(
+              child: FaIcon(icon, color: Colors.white, size: 20),
+            ),
           ),
         ),
       ),

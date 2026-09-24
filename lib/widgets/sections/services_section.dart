@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
-import '../../utils/scroll_service.dart';
+import '../../utils/links.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -110,12 +110,7 @@ class ServicesSection extends StatelessWidget {
               const SizedBox(height: 56),
               PrimaryButton(
                 label: 'Get Your Free Quote',
-                onPressed: () {
-                  ScrollService.scrollToSection(
-                    ScrollService.quoteKey,
-                    context,
-                  );
-                },
+                onPressed: Links.openQuoteForm,
               ),
             ],
           ),

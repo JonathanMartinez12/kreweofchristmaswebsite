@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../../theme/palette.dart';
+import '../../utils/links.dart';
 import '../layout/responsive_layout.dart';
+
+// Real reviews copied from the Google Business Profile (Links.googleReviews).
+// Add entries here to show them as cards above the Google button.
+const List<_Testimonial> _reviews = [
+  // _Testimonial(
+  //   name: 'Reviewer name',
+  //   location: 'Baton Rouge, LA',
+  //   rating: 5,
+  //   text: 'Review text copied from Google.',
+  // ),
+];
 
 class TestimonialsSection extends StatelessWidget {
   const TestimonialsSection({super.key});
@@ -9,30 +23,6 @@ class TestimonialsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = ResponsiveLayout.isMobile(context);
-
-    final testimonials = [
-      _Testimonial(
-        name: 'Sarah Johnson',
-        location: 'Baton Rouge, LA',
-        rating: 5,
-        text:
-            'Absolutely stunning! Our home has never looked better. The team was professional, punctual, and the installation was flawless.',
-      ),
-      _Testimonial(
-        name: 'Michael Chen',
-        location: 'Baton Rouge, LA',
-        rating: 5,
-        text:
-            'We\'ve used them for 3 years now. They store everything and make it so easy. Highly recommend!',
-      ),
-      _Testimonial(
-        name: 'Emily Rodriguez',
-        location: 'Baton Rouge, LA',
-        rating: 5,
-        text:
-            'Great communication, fair pricing, and beautiful results. Our neighbors are jealous!',
-      ),
-    ];
 
     return Container(
       width: double.infinity,
@@ -59,7 +49,7 @@ class TestimonialsSection extends StatelessWidget {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: Text(
-                  'Don\'t just take our word for it—hear from our satisfied customers.',
+                  'Don\'t just take our word for it—see what our customers say on Google.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Palette.textMutedOnLight,
@@ -69,25 +59,55 @@ class TestimonialsSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 56),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isNarrow = constraints.maxWidth < 900;
-                  return Wrap(
-                    spacing: 32,
-                    runSpacing: 32,
-                    alignment: WrapAlignment.center,
-                    children: testimonials
-                        .map(
-                          (testimonial) => SizedBox(
-                            width: isNarrow
-                                ? constraints.maxWidth
-                                : (constraints.maxWidth - 64) / 3,
-                            child: _TestimonialCard(testimonial: testimonial),
-                          ),
-                        )
-                        .toList(),
-                  );
-                },
+              if (_reviews.isNotEmpty) ...[
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isNarrow = constraints.maxWidth < 900;
+                    return Wrap(
+                      spacing: 32,
+                      runSpacing: 32,
+                      alignment: WrapAlignment.center,
+                      children: _reviews
+                          .map(
+                            (testimonial) => SizedBox(
+                              width: isNarrow
+                                  ? constraints.maxWidth
+                                  : (constraints.maxWidth - 64) / 3,
+                              child: _TestimonialCard(testimonial: testimonial),
+                            ),
+                          )
+                          .toList(),
+                    );
+                  },
+                ),
+                const SizedBox(height: 48),
+              ],
+              OutlinedButton.icon(
+                onPressed: () => Links.open(Links.googleReviews),
+                icon: const FaIcon(
+                  FontAwesomeIcons.google,
+                  size: 18,
+                  color: Palette.textOnLight,
+                ),
+                label: const Text(
+                  'Read Our Reviews on Google',
+                  style: TextStyle(
+                    color: Palette.textOnLight,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: const BorderSide(color: Color(0xFFDADCE0)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 18,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
               ),
             ],
           ),
@@ -125,7 +145,7 @@ class _TestimonialCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
