@@ -1,11 +1,11 @@
 {
-    "name": "kreweofchristmaswebsite",
-    "short_name": "kreweofchristmaswebsite",
+    "name": "Krewe of Christmas",
+    "short_name": "Krewe of Christmas",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F2EDE7",
+    "theme_color": "#00B894",
+    "description": "Professional Christmas light installation in Baton Rouge.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
