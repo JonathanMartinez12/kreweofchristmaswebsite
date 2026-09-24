@@ -6,15 +6,37 @@ import '../../theme/palette.dart';
 import '../../utils/links.dart';
 import '../layout/responsive_layout.dart';
 
+// Overall star rating shown on the Google Business Profile.
+const String _googleRating = '5.0';
+
 // Real reviews copied from the Google Business Profile (Links.googleReviews).
-// Add entries here to show them as cards above the Google button.
+// Reviews that are cut off on Google end with '…'. Long and short reviews are
+// paired so each row of cards is roughly the same height.
 const List<_Testimonial> _reviews = [
-  // _Testimonial(
-  //   name: 'Reviewer name',
-  //   location: 'Baton Rouge, LA',
-  //   rating: 5,
-  //   text: 'Review text copied from Google.',
-  // ),
+  _Testimonial(
+    name: 'Rachel Eggie',
+    rating: 5,
+    text:
+        'We used them for our Christmas lights last year and had such a great experience! Everything looked beautiful, the process was so easy, and the team was amazing to work with. We loved our lights and are excited to use them again this year. Highly recommend!',
+  ),
+  _Testimonial(
+    name: 'Troy Borne',
+    rating: 5,
+    text:
+        'John at Krewe of Christmas did an excellent job installing and removing our Christmas lights. They provided great communication before installation and throughout the process, and they are quick to respond if a bulb burns out…',
+  ),
+  _Testimonial(
+    name: 'Thomas Hebert',
+    rating: 5,
+    text:
+        'This is, without a doubt, a 5-STAR experience and the BEST Christmas lighting company around!…',
+  ),
+  _Testimonial(
+    name: 'Chase Sharp',
+    rating: 5,
+    text:
+        'These guys get the job done quick and easy. The Christmas lights they put on our house look awesome!',
+  ),
 ];
 
 class TestimonialsSection extends StatelessWidget {
@@ -58,30 +80,44 @@ class TestimonialsSection extends StatelessWidget {
                       ),
                 ),
               ),
-              const SizedBox(height: 56),
-              if (_reviews.isNotEmpty) ...[
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isNarrow = constraints.maxWidth < 900;
-                    return Wrap(
-                      spacing: 32,
-                      runSpacing: 32,
-                      alignment: WrapAlignment.center,
-                      children: _reviews
-                          .map(
-                            (testimonial) => SizedBox(
-                              width: isNarrow
-                                  ? constraints.maxWidth
-                                  : (constraints.maxWidth - 64) / 3,
-                              child: _TestimonialCard(testimonial: testimonial),
+              const SizedBox(height: 24),
+              const _RatingSummary(),
+              const SizedBox(height: 48),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final perRow = constraints.maxWidth < 900 ? 1 : 2;
+                  final rows = <Widget>[];
+                  for (var i = 0; i < _reviews.length; i += perRow) {
+                    final rowReviews = _reviews.skip(i).take(perRow).toList();
+                    rows.add(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var j = 0; j < perRow; j++) ...[
+                            if (j > 0) const SizedBox(width: 32),
+                            Expanded(
+                              child: j < rowReviews.length
+                                  ? _TestimonialCard(
+                                      testimonial: rowReviews[j],
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
-                          )
-                          .toList(),
+                          ],
+                        ],
+                      ),
                     );
-                  },
-                ),
-                const SizedBox(height: 48),
-              ],
+                  }
+                  return Column(
+                    children: [
+                      for (var i = 0; i < rows.length; i++) ...[
+                        if (i > 0) const SizedBox(height: 32),
+                        rows[i],
+                      ],
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 48),
               OutlinedButton.icon(
                 onPressed: () => Links.open(Links.googleReviews),
                 icon: const FaIcon(
@@ -90,7 +126,7 @@ class TestimonialsSection extends StatelessWidget {
                   color: Palette.textOnLight,
                 ),
                 label: const Text(
-                  'Read Our Reviews on Google',
+                  'See More Reviews on Google',
                   style: TextStyle(
                     color: Palette.textOnLight,
                     fontSize: 16,
@@ -117,15 +153,55 @@ class TestimonialsSection extends StatelessWidget {
   }
 }
 
+class _RatingSummary extends StatelessWidget {
+  const _RatingSummary();
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 12,
+      runSpacing: 8,
+      children: [
+        const Text(
+          _googleRating,
+          style: TextStyle(
+            color: Palette.textOnLight,
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            5,
+            (index) => const Icon(
+              Icons.star,
+              color: Palette.accentGold,
+              size: 28,
+            ),
+          ),
+        ),
+        const Text(
+          'on Google',
+          style: TextStyle(
+            color: Palette.textMutedOnLight,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _Testimonial {
   final String name;
-  final String location;
   final int rating;
   final String text;
 
   const _Testimonial({
     required this.name,
-    required this.location,
     required this.rating,
     required this.text,
   });
@@ -166,7 +242,7 @@ class _TestimonialCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            testimonial.text,
+            '"${testimonial.text}"',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Palette.textMutedOnLight,
                   fontSize: 15,
@@ -206,12 +282,24 @@ class _TestimonialCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    testimonial.location,
-                    style: TextStyle(
-                      color: Palette.textMutedOnLight,
-                      fontSize: 13,
-                    ),
+                  const SizedBox(height: 2),
+                  const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.google,
+                        size: 12,
+                        color: Palette.textMutedOnLight,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        'Google review',
+                        style: TextStyle(
+                          color: Palette.textMutedOnLight,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
