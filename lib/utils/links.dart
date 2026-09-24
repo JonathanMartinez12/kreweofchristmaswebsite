@@ -11,4 +11,9 @@ class Links {
   }
 
   static Future<void> openQuoteForm() => open(quoteForm);
+
+  /// Opens the static privacy policy page (web/privacy.html) in the same tab.
+  static Future<void> openPrivacyPolicy() async {
+    await launchUrl(Uri.base.resolve('/privacy.html'), webOnlyWindowName: '_self');
+  }
 }

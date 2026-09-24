@@ -83,6 +83,8 @@ class FooterSection extends StatelessWidget {
                             fontSize: 14,
                           ),
                     ),
+                    const SizedBox(height: 8),
+                    const _PrivacyLink(),
                   ],
                 )
               else
@@ -96,12 +98,19 @@ class FooterSection extends StatelessWidget {
                             fontSize: 14,
                           ),
                     ),
-                    Text(
-                      'Licensed & insured',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Palette.textMutedOnLight,
-                            fontSize: 14,
-                          ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const _PrivacyLink(),
+                        const SizedBox(width: 24),
+                        Text(
+                          'Licensed & insured',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Palette.textMutedOnLight,
+                                fontSize: 14,
+                              ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -140,6 +149,29 @@ class _SocialIcon extends StatelessWidget {
             child: Center(
               child: FaIcon(icon, color: Colors.white, size: 20),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PrivacyLink extends StatelessWidget {
+  const _PrivacyLink();
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: Links.openPrivacyPolicy,
+        child: const Text(
+          'Privacy Policy',
+          style: TextStyle(
+            color: Palette.textMutedOnLight,
+            fontSize: 14,
+            decoration: TextDecoration.underline,
+            decorationColor: Palette.textMutedOnLight,
           ),
         ),
       ),
