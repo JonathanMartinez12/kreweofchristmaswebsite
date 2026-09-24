@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/links.dart';
 import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import 'red_button.dart';  // Import red button
@@ -139,12 +140,7 @@ class _NavBarState extends State<NavBar> {
                   if (!isMobile)
                     RedButton(
                       label: 'Get a Free Quote',
-                      onPressed: () {
-                        ScrollService.scrollToSection(
-                          ScrollService.quoteKey,
-                          context,
-                        );
-                      },
+                      onPressed: Links.openQuoteForm,
                     ),
                   
                   // Mobile hamburger menu

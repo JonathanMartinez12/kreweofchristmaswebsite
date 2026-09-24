@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 
 import '../../theme/palette.dart';
-import '../../utils/scroll_service.dart';
+import '../../utils/links.dart';
 import '../layout/responsive_layout.dart';
 import '../common/primary_button.dart';
 
@@ -19,22 +20,18 @@ class _GallerySectionState extends State<GallerySection> {
   Timer? _autoPlayTimer;
   final PageController _pageController = PageController();
 
-  final List<String> _allImages = [
-    'assets/images/gallery/IMG_0820.jpeg',
-    'assets/images/gallery/IMG_0821.jpeg',
-    'assets/images/gallery/IMG_0822.jpeg',
-    'assets/images/gallery/IMG_0823.jpeg',
-    'assets/images/gallery/IMG_0824.jpeg',
-    'assets/images/gallery/IMG_0825.jpeg',
-    'assets/images/gallery/IMG_0826.jpeg',
-    'assets/images/gallery/IMG_0827.jpeg',
-    'assets/images/gallery/IMG_0828.jpeg',
-    'assets/images/gallery/IMG_0829.jpeg',
-  ];
+  // Every image in assets/images/gallery/ is shown automatically,
+  // sorted by filename. Just drop new photos into that folder.
+  static const String _galleryDir = 'assets/images/gallery/';
+  static const Set<String> _imageExtensions = {
+    '.jpg', '.jpeg', '.png', '.webp', '.gif',
+  };
+  List<String> _allImages = [];
 
   @override
   void initState() {
     super.initState();
+    _loadGalleryImages();
     _startAutoPlay();
   }
 
@@ -45,9 +42,23 @@ class _GallerySectionState extends State<GallerySection> {
     super.dispose();
   }
 
+  Future<void> _loadGalleryImages() async {
+    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+    final images = manifest
+        .listAssets()
+        .where((path) =>
+            path.startsWith(_galleryDir) &&
+            _imageExtensions.any((ext) => path.toLowerCase().endsWith(ext)))
+        .toList()
+      ..sort();
+    if (mounted) setState(() => _allImages = images);
+  }
+
   void _startAutoPlay() {
     _autoPlayTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (!_showFullGallery && _pageController.hasClients) {
+      if (!_showFullGallery &&
+          _pageController.hasClients &&
+          _allImages.isNotEmpty) {
         final nextPage = (_currentPage + 1) % _getPageCount();
         _pageController.animateToPage(
           nextPage,
@@ -191,12 +202,7 @@ class _GallerySectionState extends State<GallerySection> {
               // Green CTA button
               PrimaryButton(
                 label: 'Get Your Free Quote',
-                onPressed: () {
-                  ScrollService.scrollToSection(
-                    ScrollService.quoteKey,
-                    context,
-                  );
-                },
+                onPressed: Links.openQuoteForm,
               ),
             ],
           ),

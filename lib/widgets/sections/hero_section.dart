@@ -2,11 +2,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../theme/palette.dart';
+import '../../utils/links.dart';
 import '../../utils/scroll_service.dart';
 import '../layout/responsive_layout.dart';
 import '../common/red_button.dart';
 
-const String kHeroBackgroundImageAsset = 'assets/images/hero_house.jpg';
+const String kHeroBackgroundImageAsset = 'assets/images/gallery/IMG_2301.jpeg';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
@@ -254,12 +255,7 @@ class _HeroText extends StatelessWidget {
             RedButton(
               label: 'Get a Free Quote',
               isLarge: true,
-              onPressed: () {
-                ScrollService.scrollToSection(
-                  ScrollService.quoteKey,
-                  context,
-                );
-              },
+              onPressed: Links.openQuoteForm,
             ),
             // WHITE OUTLINED BUTTON
             _HeroOutlinedButton(
